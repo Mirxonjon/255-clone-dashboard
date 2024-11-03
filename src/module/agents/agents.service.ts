@@ -1238,8 +1238,8 @@ try {
     const theCurrentHour = atDate.getHours();
     const theCurrentMinut = atDate.getMinutes();
     const RequestTimeMinutes = [0, 10, 20];
-    console.log(theCurrentHour , theCurrentMinut);
-    const as = await ControlAgentGraphNB('20-08', theCurrentHour, this.#_cache);
+    // console.log(theCurrentHour , theCurrentMinut);
+    // const as = await ControlAgentGraphNB('20-08', theCurrentHour, this.#_cache);
 
     if (RequestTimeMinutes.includes(theCurrentMinut)) {
       if (theCurrentHour == 7) {
