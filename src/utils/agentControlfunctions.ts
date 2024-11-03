@@ -117,6 +117,12 @@ export const ControlAgentGraphNB = async (
     `${workTimeArr[1]}:00:00`,
   );
 
+    console.log(
+      `${+theDay < 10 ? `0${theDay}` : theDay}.${
+        theMonth.toString().length > 1 ? theMonth : `0${theMonth}`
+      }.${theYear}`,typeWorkGraphSmen.includes(worktime) ? 'smen' : 'day',
+      'okk',
+    );
 
   const listOfWorkersToday: any = await GraphDaysEntity.find({
     where: {
@@ -137,6 +143,8 @@ export const ControlAgentGraphNB = async (
       },
     },
   });
+    console.log(listOfWorkersToday, 'okk' );
+    
   let a = [];
   let arrDataForSheet = [] as any;
 
