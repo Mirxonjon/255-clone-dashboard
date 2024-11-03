@@ -16,7 +16,7 @@ export class AgentsController {
   async findAllAgents() {
     return await this.#_service.findAllAgents();
   }
-    @Get('allBlock')
+  @Get('allBlock')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
@@ -30,10 +30,12 @@ export class AgentsController {
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
   @ApiOkResponse()
-  async filterall(  @Query('name') name: string,
-  @Query('operator_number') operator_number: string,
-  @Query('status') status: string,) {
-    return await this.#_service.filterAll(name , operator_number , status);
+  async filterall(
+    @Query('name') name: string,
+    @Query('operator_number') operator_number: string,
+    @Query('status') status: string,
+  ) {
+    return await this.#_service.filterAll(name, operator_number, status);
   }
 
   @Post('create/service')
@@ -41,20 +43,17 @@ export class AgentsController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: [
-        'service_id',
-      ],
+      required: ['service_id'],
       properties: {
         service_id: {
           type: 'string',
           default: 'acds',
         },
-        
       },
     },
   })
-  async createService(@Body() body: {service_id : string})  {
-    return this.#_service.createService(body)        
+  async createService(@Body() body: { service_id: string }) {
+    return this.#_service.createService(body);
   }
 
   @Post('create/group')
@@ -62,12 +61,7 @@ export class AgentsController {
   @ApiBody({
     schema: {
       type: 'object',
-      required: [
-        'service_id',
-        'group_id',
-        'name',
-        'title'
-      ],
+      required: ['service_id', 'group_id', 'name', 'title'],
       properties: {
         service_id: {
           type: 'string',
@@ -80,17 +74,24 @@ export class AgentsController {
         name: {
           type: 'string',
           default: 'acds',
-        }, 
+        },
         title: {
           type: 'string',
           default: 'acds',
         },
-        
       },
     },
   })
-  async createGroup(@Body() body: {service_id : string,group_id : string,name : string,title : string})  {
-    return this.#_service.createGroup(body)        
+  async createGroup(
+    @Body()
+    body: {
+      service_id: string;
+      group_id: string;
+      name: string;
+      title: string;
+    },
+  ) {
+    return this.#_service.createGroup(body);
   }
 
   @Patch('/updateAgent/:id')
@@ -106,7 +107,26 @@ export class AgentsController {
       },
     },
   })
-  async update(@Param('id') id: string, @Body() updateAgentdto: {status: boolean}) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateAgentdto: { status: boolean },
+  ) {
     return this.#_service.updateAgent(id, updateAgentdto);
+  }
+
+  @Get('agents/controlgraph-or-update')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async updatecontrolgraph() {
+    return await this.#_service.controlOperator();
+  }
+
+  @Get('writeNewGraph-or-update')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeNewGraph() {
+    return await this.#_service.writeNewGraph();
   }
 }

@@ -3,6 +3,7 @@
 /node_modules
 /.env
 /src/utils/key.json
+/src/utils/google.json
 
 # Logs
 logs

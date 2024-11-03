@@ -26,17 +26,7 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
-  // setInterval(() => {
-  //   fetchEvery1hour();
-  // }, 3600000);
-  // fetchEvery1hour()
-  // setInterval(() => {
 
-  //   operatorsWhere()
-  //   // fetchEvery1hour()
-
-  //   } , 5000 )
-  // operatorsWhere()
 
 
   const host = config.getOrThrow<string>('app.host');

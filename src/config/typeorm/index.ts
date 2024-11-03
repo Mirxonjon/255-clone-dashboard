@@ -9,6 +9,11 @@ import { dataServiceGroupEntity } from 'src/entities/dataServiceGroup';
 import { dataGroupEntity } from 'src/entities/dataGroup.entity';
 import { agentsDataStateEntity } from 'src/entities/agentsDataState.entity';
 import { agentslockEntity } from 'src/entities/agentslock.entity';
+import { AgentDateEntity } from 'src/entities/agentdate.entity';
+import { GraphMonthEntity } from 'src/entities/graphMoth';
+import { GraphDaysEntity } from 'src/entities/graphDays';
+import { ComputersEntity } from 'src/entities/computer.entity';
+import { AgentControlGraphEntity } from 'src/entities/agentsControlGrafigh.entity';
 
 dotenv.config();
 
@@ -29,6 +34,11 @@ export const connectDb: TypeOrmModuleOptions = {
     dataGroupEntity,
     agentsDataStateEntity,
     agentslockEntity,
+    AgentDateEntity,
+    GraphMonthEntity,
+    GraphDaysEntity,
+    ComputersEntity,
+    AgentControlGraphEntity,
   ],
   autoLoadEntities: true,
   synchronize: true,

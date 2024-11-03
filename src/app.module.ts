@@ -17,19 +17,21 @@ import { CacheModule } from '@nestjs/cache-manager';
     ConfigModule.forRoot(config),
     TypeOrmModule.forRoot(connectDb),
     ScheduleModule.forRoot(),
+    // TelegrafModule.forRoot({
+    //   token: '5994786340:AAHQOpj10D8Bi0XhgQpYD14hDoHogp3Q0z8',
+    // }),
     TelegrafModule.forRoot({
-      token: '5994786340:AAHQOpj10D8Bi0XhgQpYD14hDoHogp3Q0z8',
+      token: process.env.BOT_TOKEN ,
     }),
     UsersModule,
-
     EventModule,
     AgentsModule,
     CacheModule.registerAsync({
       isGlobal: true,
-      useFactory: ( ): CacheModuleOptions => ({
-        ttl:3600000,
-      })
-    })
+      useFactory: (): CacheModuleOptions => ({
+        ttl: 3600000,
+      }),
+    }),
   ],
   controllers: [],
   providers: [],
