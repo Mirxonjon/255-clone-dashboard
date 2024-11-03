@@ -165,6 +165,7 @@ export const ControlAgentGraphNB = async (
         },
       });
     }
+    console.log('fetch to soup' , );
 
     //   console.log(e.month_id?.agent_id.id , 'idadn');
     const agentStatisticPromise = fetchGetagentStatistic(
@@ -974,6 +975,7 @@ export const ControlAgentGraphNB = async (
     //   }
     // }
   }
+console.log(arrDataForSheet , a);
 
   const sheetReadAttendanceRecordsAdmin = await readSheets(
     '255CHECK-IN/OUT',
@@ -985,6 +987,7 @@ export const ControlAgentGraphNB = async (
     ? `A${sheetReadAttendanceRecordsAdmin?.length + 1}`
     : 'A1';
 
+console.log(writeRow);
 
   await writeToSheet('255CHECK-IN/OUT', writeRow, arrDataForSheet);
     return [true];
