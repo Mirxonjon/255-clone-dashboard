@@ -152,10 +152,12 @@ export const ControlAgentGraphNB = async (
     let dataIp: any = await cache.get('activeOperators');
     // console.log(dataIp?.length);
     let findOperator: any = {};
-    for (let i of dataIp) {
-      if (i?.login == e.month_id?.agent_id?.id_login) {
-        a.push('1');
-        findOperator = i;
+    if (dataIp) {
+      for (let i of dataIp) {
+        if (i?.login == e.month_id?.agent_id?.id_login) {
+          a.push('1');
+          findOperator = i;
+        }
       }
     }
 

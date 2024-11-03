@@ -813,7 +813,6 @@ try {
                   +dataDay[0]?.split('.')[1] - 1,
                   +dataDay[0]?.split('.')[0],
                 );
-                  console.log(findDay, 'day');
                   
                 if (findDay) {
                   if (typesGraph.includes(dataDay[1])) {
