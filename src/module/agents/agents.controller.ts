@@ -129,4 +129,12 @@ export class AgentsController {
   async writeNewGraph() {
     return await this.#_service.writeNewGraph();
   }
+
+  @Get('writeIp-adress-or-update')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async writeIpAddress() {
+    return await this.#_service.writeIpAdress();
+  }
 }

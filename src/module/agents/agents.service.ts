@@ -1,6 +1,6 @@
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Injectable, HttpException, HttpStatus, Inject } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Cache } from 'cache-manager';
 import { AgentDateEntity } from 'src/entities/agentdate.entity';
 import { agentsDataStateEntity } from 'src/entities/agentsDataState.entity';
@@ -1230,7 +1230,8 @@ try {
 }
   }
 
-  @Cron('10 * * * * *')
+  @Cron(CronExpression.EVERY_10_MINUTES)
+
   async controlOperator() {
     const atDate = new Date();
 
