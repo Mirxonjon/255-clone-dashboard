@@ -247,7 +247,7 @@ export const ControlAgentGraphNB = async (
             })
             .execute();
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id,
+            e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
             new Date(),
@@ -342,7 +342,7 @@ export const ControlAgentGraphNB = async (
             .execute();
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id,
+            e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kech qoldi',
             new Date(),
@@ -374,7 +374,7 @@ export const ControlAgentGraphNB = async (
             .execute();
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id,
+            e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
             new Date(),
@@ -459,7 +459,7 @@ export const ControlAgentGraphNB = async (
               throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
             });
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id,
+            e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kech qoldi',
             new Date(),
@@ -499,7 +499,7 @@ export const ControlAgentGraphNB = async (
             });
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id,
+            e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
             new Date(),
