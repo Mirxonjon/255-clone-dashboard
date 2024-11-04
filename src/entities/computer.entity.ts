@@ -33,6 +33,12 @@ export class ComputersEntity extends BaseEntity {
   })
   location: string;
 
+  @Column({
+    type: 'character varying',
+    nullable: true,
+  })
+  atc: string;
+
   @CreateDateColumn({ name: 'created_at' })
   create_data: Date;
 }

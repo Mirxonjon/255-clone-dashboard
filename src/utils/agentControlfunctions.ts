@@ -13,11 +13,7 @@ import { Cache } from 'cache-manager';
 import { ComputersEntity } from 'src/entities/computer.entity';
 import { readSheets, writeToSheet } from './google_cloud';
 
-function waitFor5Seconds() {
-  return new Promise((resolve) => {
-    setTimeout(resolve, 5000); // 5,000 millisekund (5 soniya) kutamiz
-  });
-}
+
 
 export const ControlAgentGraphNB = async (
   worktime: string,
@@ -117,12 +113,7 @@ export const ControlAgentGraphNB = async (
     `${workTimeArr[1]}:00:00`,
   );
 
-    console.log(
-      `${+theDay < 10 ? `0${theDay}` : theDay}.${
-        theMonth.toString().length > 1 ? theMonth : `0${theMonth}`
-      }.${theYear}`,typeWorkGraphSmen.includes(worktime) ? 'smen' : 'day',
-      'okk',
-    );
+
 
   const listOfWorkersToday: any = await GraphDaysEntity.find({
     where: {
@@ -165,6 +156,7 @@ export const ControlAgentGraphNB = async (
       sheet_id: null,
       ip_Adress: null,
       location: null,
+      atc: null,
       create_data: null,
     };
 
@@ -175,7 +167,6 @@ export const ControlAgentGraphNB = async (
         },
       });
     }
-    console.log('fetch to soup' , );
 
     //   console.log(e.month_id?.agent_id.id , 'idadn');
     const agentStatisticPromise = fetchGetagentStatistic(
@@ -209,7 +200,7 @@ export const ControlAgentGraphNB = async (
           agentStatistic.LastLoginTime,
         );
 
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds) {
+        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
           await AgentControlGraphEntity.createQueryBuilder()
             .update(AgentControlGraphEntity)
             .set({
@@ -237,6 +228,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         } else {
           await AgentControlGraphEntity.createQueryBuilder()
@@ -266,6 +258,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         }
       } else if (
@@ -299,6 +292,7 @@ export const ControlAgentGraphNB = async (
           e.work_time,
           findLocation ? findLocation.ip_Adress : 'Not available',
           findLocation ? findLocation.location : 'Not available',
+          findLocation ? findLocation.atc : 'Not available',
         ]);
       } else if (agentStatistic.LastLoginTime == 'not login') {
 
@@ -324,13 +318,14 @@ export const ControlAgentGraphNB = async (
           e.work_time,
           findLocation ? findLocation.ip_Adress : 'Not available',
           findLocation ? findLocation.location : 'Not available',
+          findLocation ? findLocation.atc : 'Not available',
         ]);
       } else {
         const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
           agentStatistic.LastLoginTime,
         );
 
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds) {
+        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180 ) {
 
           await AgentControlGraphEntity.createQueryBuilder()
             .update(AgentControlGraphEntity)
@@ -358,6 +353,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         } else {
 
@@ -389,6 +385,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         }
       }
@@ -432,12 +429,13 @@ export const ControlAgentGraphNB = async (
           e.work_time,
           findLocation ? findLocation.ip_Adress : 'Not available',
           findLocation ? findLocation.location : 'Not available',
+          findLocation ? findLocation.atc : 'Not available',
         ]);
       } else {
         const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
           agentStatistic.LastLoginTime,
         );
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds) {
+        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds +180) {
           await AgentControlGraphEntity.createQueryBuilder()
             .insert()
             .into(AgentControlGraphEntity)
@@ -472,6 +470,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         } else {
           await AgentControlGraphEntity.createQueryBuilder()
@@ -511,6 +510,7 @@ export const ControlAgentGraphNB = async (
             e.work_time,
             findLocation ? findLocation.ip_Adress : 'Not available',
             findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
           ]);
         }
       }
@@ -985,7 +985,7 @@ export const ControlAgentGraphNB = async (
     //   }
     // }
   }
-console.log(arrDataForSheet , a);
+// console.log(arrDataForSheet , a);
 
   const sheetReadAttendanceRecordsAdmin = await readSheets(
     '255CHECK-IN/OUT',

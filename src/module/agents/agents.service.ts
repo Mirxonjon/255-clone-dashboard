@@ -1230,14 +1230,14 @@ try {
 }
   }
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_MINUTE)
 
   async controlOperator() {
     const atDate = new Date();
 
     const theCurrentHour = atDate.getHours();
     const theCurrentMinut = atDate.getMinutes();
-    const RequestTimeMinutes = [0, 10, 20];
+    const RequestTimeMinutes = [3, 9, 20];
     // console.log(theCurrentHour , theCurrentMinut);
     // const as = await ControlAgentGraphNB('20-08', theCurrentHour, this.#_cache);
 
@@ -1337,6 +1337,7 @@ try {
             sheet_id: e[0],
             ip_Adress: e[1],
             location: e[2],
+            atc: e[3],
           });
         } else {
           await ComputersEntity.createQueryBuilder()
@@ -1346,6 +1347,7 @@ try {
               sheet_id: e[0],
               ip_Adress: e[1],
               location: e[2],
+              atc: e[3],
             })
             .execute()
             .catch((e) => {
