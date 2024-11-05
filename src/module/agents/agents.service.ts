@@ -1318,7 +1318,7 @@ try {
 
   @Cron('0 0 1 * *')
   async writeIpAdress() {
-    const cutRanges = 'A2:C999';
+    const cutRanges = 'A2:D999';
     // const sheetId: string = '1BF7Z9CTKdL-RvBwzZTcB4gvOqoviX6fUwHIBmSlG_ow';
     const rangeName: string = 'IP 255';
     const sheets = await readSheets(rangeName, cutRanges);
