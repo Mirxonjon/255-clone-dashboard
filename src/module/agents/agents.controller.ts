@@ -137,4 +137,12 @@ export class AgentsController {
   async writeIpAddress() {
     return await this.#_service.writeIpAdress();
   }
+
+  @Get('delete-operator')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async deleteOperator() {
+    return await this.#_service.deleteOperator();
+  }
 }

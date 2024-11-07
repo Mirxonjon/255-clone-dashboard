@@ -102,3 +102,34 @@ export const writeToSheet = async (
   }
 };
 
+export const insertRowsAtTop = async (list, numRows = 10 ) => {
+  const sheets = google.sheets({ version: 'v4', auth }); // Create Sheets API client instance.
+  const spreadsheetId = process.env.SHEETID;
+
+  try {
+    const res = await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            insertDimension: {
+              range: {
+                sheetId: list, // The ID of the sheet where rows will be inserted.
+                dimension: 'ROWS',
+                startIndex: 0,
+                endIndex: numRows, // Insert 'numRows' rows starting from the top.
+              },
+              inheritFromBefore: false,
+            },
+          },
+          
+        ],
+      
+      },
+    });
+    return res.data; // Returns the response from the Sheets API.
+  } catch (error) {
+    console.error('Error inserting rows:', error);
+  }
+};
+

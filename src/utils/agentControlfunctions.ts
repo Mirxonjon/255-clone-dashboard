@@ -11,7 +11,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { fetchGetagentStatistic } from './functionForFetchSoap';
 import { Cache } from 'cache-manager';
 import { ComputersEntity } from 'src/entities/computer.entity';
-import { readSheets, writeToSheet } from './google_cloud';
+import { insertRowsAtTop, readSheets, writeToSheet } from './google_cloud';
 
 
 
@@ -134,7 +134,7 @@ export const ControlAgentGraphNB = async (
       },
     },
   });
-    console.log(listOfWorkersToday, 'okk' );
+    console.log(listOfWorkersToday, listOfWorkersToday.length, 'okk');
     
   let a = [];
   let arrDataForSheet = [] as any;
@@ -220,7 +220,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kech qoldi',
-            new Date(),
+           new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -250,7 +250,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
-            new Date(),
+            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -281,10 +281,10 @@ export const ControlAgentGraphNB = async (
           .execute();
 
         arrDataForSheet.push([
-          e.month_id?.agent_id?.id,
+          e.month_id?.agent_id?.id_login,
           e.month_id?.agent_id?.name,
           'kelmadi',
-          new Date(),
+          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
           agentStatistic.LastLoginTime,
           agentStatistic.PauseDuration,
           agentStatistic.FulDuration,
@@ -307,10 +307,10 @@ export const ControlAgentGraphNB = async (
           .execute();
 
         arrDataForSheet.push([
-          e.month_id?.agent_id?.id,
+          e.month_id?.agent_id?.id_login,
           e.month_id?.agent_id?.name,
           'kelmadi',
-          new Date(),
+          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
           agentStatistic.LastLoginTime,
           agentStatistic.PauseDuration,
           agentStatistic.FulDuration,
@@ -345,7 +345,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kech qoldi',
-            new Date(),
+            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -377,7 +377,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
-            new Date(),
+            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -390,8 +390,6 @@ export const ControlAgentGraphNB = async (
         }
       }
     } else {
-
-      
 
       if ((agentStatistic.LastLoginTime = 'not login')) {
         await AgentControlGraphEntity.createQueryBuilder()
@@ -418,10 +416,10 @@ export const ControlAgentGraphNB = async (
           });
 
         arrDataForSheet.push([
-          e.month_id?.agent_id?.id,
+          e.month_id?.agent_id?.id_login,
           e.month_id?.agent_id?.name,
           'kelmadi',
-          new Date(),
+          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
           agentStatistic.LastLoginTime,
           agentStatistic.PauseDuration,
           agentStatistic.FulDuration,
@@ -462,7 +460,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kech qoldi',
-            new Date(),
+            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -502,7 +500,7 @@ export const ControlAgentGraphNB = async (
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'vaqtida keldi',
-            new Date(),
+            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -987,19 +985,17 @@ export const ControlAgentGraphNB = async (
   }
 // console.log(arrDataForSheet , a);
 
-  const sheetReadAttendanceRecordsAdmin = await readSheets(
-    '255CHECK-IN/OUT',
-    'A:A',
-  );
+  // const sheetReadAttendanceRecordsAdmin = await readSheets('Klon', 'A:A');
 
   // arrDataForSheet;
-  const writeRow = sheetReadAttendanceRecordsAdmin
-    ? `A${sheetReadAttendanceRecordsAdmin?.length + 1}`
-    : 'A1';
+  // const writeRow = sheetReadAttendanceRecordsAdmin
+  //   ? `A${sheetReadAttendanceRecordsAdmin?.length + 1}`
+  //   : 'A1';
 
-console.log(writeRow);
+// console.log(writeRow);
 
-  await writeToSheet('255CHECK-IN/OUT', writeRow, arrDataForSheet);
+await insertRowsAtTop('904805158', arrDataForSheet?.length);
+await writeToSheet('255CHECK-IN/OUT', 'A1', arrDataForSheet);
     return [true];
       } catch (error) {
     console.log(error.message);

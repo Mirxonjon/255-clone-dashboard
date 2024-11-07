@@ -42,7 +42,9 @@ export class GraphMonthEntity extends BaseEntity {
   // })
   // login: string;
 
-  @ManyToOne(() => AgentDateEntity, (agent) => agent.months)
+  @ManyToOne(() => AgentDateEntity, (agent) => agent.months, {
+    onDelete: 'CASCADE',
+  })
   agent_id: AgentDateEntity[];
 
   @OneToMany(() => GraphDaysEntity, (group) => group.month_id)
