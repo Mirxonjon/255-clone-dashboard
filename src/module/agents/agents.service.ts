@@ -702,11 +702,12 @@ export class AgentsService {
   async writeNewGraph() {
 try {
   const cutRanges = 'A2:AK500';
-
+  
   // const sheetId: string = '1BF7Z9CTKdL-RvBwzZTcB4gvOqoviX6fUwHIBmSlG_ow';
   const rangeName: string = '255';
   const sheets = await readSheets(rangeName, cutRanges);
-
+  console.log(sheets);
+  
   for (const e of sheets) {
     if (e[1] == '229' || e[1] == '255' || e[1] == '1009') {
       
@@ -1237,8 +1238,9 @@ try {
 
     const theCurrentHour = atDate.getHours();
     const theCurrentMinut = atDate.getMinutes();
-    const RequestTimeMinutes = [5, 10, 20 , 50];
-    console.log(theCurrentHour , theCurrentMinut);
+    const RequestTimeMinutes = [5, 10, 20, 50];
+    const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
+    console.log(theCurrentHour , theCurrentMinut, atDate ,uzbekistanTime );
     // const as = await ControlAgentGraphNB('20-08', theCurrentHour, this.#_cache);
 
     if (RequestTimeMinutes.includes(theCurrentMinut)) {
