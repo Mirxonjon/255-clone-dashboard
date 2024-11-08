@@ -1233,8 +1233,8 @@ export class AgentsService {
     }
   }
 
+  
   @Cron(CronExpression.EVERY_MINUTE)
-
   async controlOperator() {
     const atDate = new Date();
 
@@ -1242,7 +1242,7 @@ export class AgentsService {
     const theCurrentMinut = atDate.getMinutes();
     const RequestTimeMinutes = [5, 10, 20, 50];
     const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
-    console.log(theCurrentHour, theCurrentMinut, atDate, uzbekistanTime);
+    // console.log(theCurrentHour, theCurrentMinut, atDate, uzbekistanTime);
     // const controlday = await ControlAgentGraphNB(
     //   '07-16',
     //   theCurrentHour,
