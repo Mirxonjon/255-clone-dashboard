@@ -191,7 +191,7 @@ export const ControlAgentGraphNB = async (
             agentStatistic.LastLoginTime,
           );
 
-          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 300) {
             await AgentControlGraphEntity.createQueryBuilder()
               .update(AgentControlGraphEntity)
               .set({
@@ -208,7 +208,7 @@ export const ControlAgentGraphNB = async (
               })
               .execute();
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'kech qoldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -238,7 +238,7 @@ export const ControlAgentGraphNB = async (
               })
               .execute();
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'vaqtida keldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -271,7 +271,7 @@ export const ControlAgentGraphNB = async (
             .execute();
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
+            // e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kelmadi',
             new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -296,7 +296,7 @@ export const ControlAgentGraphNB = async (
             .execute();
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
+            // e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kelmadi',
             new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -314,7 +314,7 @@ export const ControlAgentGraphNB = async (
             agentStatistic.LastLoginTime,
           );
 
-          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 300) {
             await AgentControlGraphEntity.createQueryBuilder()
               .update(AgentControlGraphEntity)
               .set({
@@ -330,7 +330,7 @@ export const ControlAgentGraphNB = async (
               .execute();
 
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'kech qoldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -361,7 +361,7 @@ export const ControlAgentGraphNB = async (
               .execute();
 
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'vaqtida keldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -402,7 +402,7 @@ export const ControlAgentGraphNB = async (
             });
 
           arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
+            // e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
             'kelmadi',
             new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -419,7 +419,7 @@ export const ControlAgentGraphNB = async (
           const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
             agentStatistic.LastLoginTime,
           );
-          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 300) {
             await AgentControlGraphEntity.createQueryBuilder()
               .insert()
               .into(AgentControlGraphEntity)
@@ -443,7 +443,7 @@ export const ControlAgentGraphNB = async (
                 throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
               });
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'kech qoldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
@@ -483,7 +483,7 @@ export const ControlAgentGraphNB = async (
               });
 
             arrDataForSheet.push([
-              e.month_id?.agent_id?.id_login,
+              // e.month_id?.agent_id?.id_login,
               e.month_id?.agent_id?.name,
               'vaqtida keldi',
               new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
