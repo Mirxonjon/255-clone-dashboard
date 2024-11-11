@@ -11,9 +11,7 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { fetchGetagentStatistic } from './functionForFetchSoap';
 import { Cache } from 'cache-manager';
 import { ComputersEntity } from 'src/entities/computer.entity';
-import { insertRowsAtTop, readSheets, writeToSheet } from './google_cloud';
-
-
+import { insertRowsAtTop,  writeToSheet } from './google_cloud';
 
 export const ControlAgentGraphNB = async (
   worktime: string,
@@ -21,432 +19,247 @@ export const ControlAgentGraphNB = async (
   cache: Cache,
 ) => {
   try {
-    
-
     const typeWorkGraph = ['15-24', '17-02'];
-      const typeWorkGraphSmen = ['08-20', '20-08'];
-  // 15-24. 17-02.
-  const atDate = new Date();
-  let theDate = convertDate(atDate);
-  const theDay = theDate.split('.')[0];
-  const theMonth: number = +theDate.split('.')[1];
-  const theYear: string = theDate.split('.')[2];
-  const workTimeArr = worktime.split('-');
-  const startControlTime = +workTimeArr[0] - 1;
-  const endControlTime = +workTimeArr[0] + 1;
-  let fromDate = new Date();
-  fromDate.setHours(0, 0, 0, 0);
+    const typeWorkGraphSmen = ['08-20', '20-08'];
+    // 15-24. 17-02.
+    const atDate = new Date();
+    let theDate = convertDate(atDate);
+    const theDay = theDate.split('.')[0];
+    const theMonth: number = +theDate.split('.')[1];
+    const theYear: string = theDate.split('.')[2];
+    const workTimeArr = worktime.split('-');
+    const startControlTime = +workTimeArr[0] - 1;
+    const endControlTime = +workTimeArr[0] + 1;
+    let fromDate = new Date();
+    fromDate.setHours(0, 0, 0, 0);
 
-  let untilDate = new Date();
-  untilDate.setHours(23, 59, 59, 999);
+    let untilDate = new Date();
+    untilDate.setHours(23, 59, 59, 999);
 
-  if (worktime == '17-02') {
-    if (startControlTime <= theCurrentHour && theCurrentHour <= 24) {
-      fromDate = new Date();
-      fromDate.setHours(startControlTime, 0, 0, 0); //16
+    if (worktime == '17-02') {
+      if (startControlTime <= theCurrentHour && theCurrentHour <= 24) {
+        fromDate = new Date();
+        fromDate.setHours(startControlTime, 0, 0, 0); //16
 
-      untilDate = new Date();
-      untilDate.setDate(untilDate.getDate() + 1);
-      untilDate.setHours(3, 0, 0, 0);
-    } else {
-      fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 1);
-      fromDate.setHours(startControlTime, 0, 0, 0); //16
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate() + 1);
+        untilDate.setHours(3, 0, 0, 0);
+      } else {
+        fromDate = new Date();
+        fromDate.setDate(fromDate.getDate() - 1);
+        fromDate.setHours(startControlTime, 0, 0, 0); //16
 
-      untilDate = new Date();
-      untilDate.setDate(untilDate.getDate());
-      untilDate.setHours(3, 0, 0, 0);
-    }
-  }
-
-  if (worktime == '15-24') {
-    if (
-      startControlTime <= theCurrentHour &&
-      theCurrentHour <= endControlTime - 1
-    ) {
-      fromDate = new Date();
-      fromDate.setHours(startControlTime, 0, 0, 0); //16
-
-      untilDate = new Date();
-      untilDate.setDate(untilDate.getDate() + 1);
-      untilDate.setHours(2, 0, 0, 0);
-    } else if (23 <= theCurrentHour && theCurrentHour <= 24) {
-      fromDate = new Date();
-      fromDate.setHours(startControlTime, 0, 0, 0); //16
-
-      untilDate = new Date();
-      untilDate.setDate(untilDate.getDate() + 1);
-      untilDate.setHours(2, 0, 0, 0);
-    } else {
-      fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - 1);
-      fromDate.setHours(startControlTime, 0, 0, 0); //16
-
-      untilDate = new Date();
-      untilDate.setDate(untilDate.getDate());
-      untilDate.setHours(1, 0, 0, 0);
-    }
-  }
-
- if (worktime == '20-08') {
-   if (startControlTime <= theCurrentHour && theCurrentHour <= 24) {
-     fromDate = new Date();
-     fromDate.setHours(startControlTime - 1, 0, 0, 0); //16
-
-     untilDate = new Date();
-     untilDate.setDate(untilDate.getDate() + 1);
-     untilDate.setHours(0, 0, 0, 0);
-   } else {
-     fromDate = new Date();
-     fromDate.setDate(fromDate.getDate() - 1);
-     fromDate.setHours(startControlTime - 1, 0, 0, 0); //16
-
-     untilDate = new Date();
-     untilDate.setDate(untilDate.getDate());
-     untilDate.setHours(23, 59, 59, 999);
-   }
- }
-  const startWorkTimeParseSeconds = parseTimeStringToSeconds(
-    `${workTimeArr[0]}:00:00`,
-  );
-  const endWorkTimeParseSeconds = parseTimeStringToSeconds(
-    `${workTimeArr[1]}:00:00`,
-  );
-
-
-
-  const listOfWorkersToday: any = await GraphDaysEntity.find({
-    where: {
-      the_date: `${+theDay < 10 ? `0${theDay}` : theDay}.${
-        theMonth.toString().length > 1 ? theMonth : `0${theMonth}`
-      }.${theYear}`,
-      work_type: typeWorkGraphSmen.includes(worktime) ? 'smen' : 'day',
-      work_time: worktime,
-      // work_time: '17-02',
-      month_id: {
-        month_number: theMonth,
-        year: theYear,
-      },
-    },
-    relations: {
-      month_id: {
-        agent_id: true,
-      },
-    },
-  });
-    console.log(listOfWorkersToday, listOfWorkersToday.length, 'okk');
-    
-  let a = [];
-  
-  for (const e of listOfWorkersToday) {
-      let arrDataForSheet = [] as any;
-    
-
-    let dataIp: any = await cache.get('activeOperators');
-    // console.log(dataIp?.length);
-    let findOperator: any = {};
-    if (dataIp) {
-      for (let i of dataIp) {
-        if (i?.login == e.month_id?.agent_id?.id_login) {
-          a.push('1');
-          findOperator = i;
-        }
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate());
+        untilDate.setHours(3, 0, 0, 0);
       }
     }
 
-    let findLocation: any = {
-      sheet_id: null,
-      ip_Adress: null,
-      location: null,
-      atc: null,
-      create_data: null,
-    };
-
-    if (findOperator?.ip_adress) {
-      findLocation = await ComputersEntity.findOne({
-        where: {
-          ip_Adress: findOperator?.ip_adress,
-        },
-      });
-    }
-
-    //   console.log(e.month_id?.agent_id.id , 'idadn');
-    const agentStatisticPromise = fetchGetagentStatistic(
-      e.month_id?.agent_id?.id,
-    );
-    let agentStatisticData = await Promise.all([agentStatisticPromise]);
-
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-
-    const agentStatistic = agentStatisticData[0];
-
-    const findAgentinControlGraph: AgentControlGraphEntity =
-      await AgentControlGraphEntity.findOne({
-        where: {
-          id_login: e.month_id?.agent_id?.id_login,
-          create_data: Between(fromDate, untilDate),
-        },
-      }).catch((e) => {
-        // console.log(e);
-        throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-      });
-
-
-    if (findAgentinControlGraph) {
+    if (worktime == '15-24') {
       if (
-        agentStatistic.LastLoginTime != 'not login' &&
-        findAgentinControlGraph.LastLoginTime != 'not login'
+        startControlTime <= theCurrentHour &&
+        theCurrentHour <= endControlTime - 1
       ) {
+        fromDate = new Date();
+        fromDate.setHours(startControlTime, 0, 0, 0); //16
 
-        const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
-          agentStatistic.LastLoginTime,
-        );
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate() + 1);
+        untilDate.setHours(2, 0, 0, 0);
+      } else if (23 <= theCurrentHour && theCurrentHour <= 24) {
+        fromDate = new Date();
+        fromDate.setHours(startControlTime, 0, 0, 0); //16
 
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
-          await AgentControlGraphEntity.createQueryBuilder()
-            .update(AgentControlGraphEntity)
-            .set({
-              LastLoginTime: findAgentinControlGraph.LastLoginTime,
-              FullDurationOfWork: agentStatistic.FulDuration,
-              PauseDuration: agentStatistic.PauseDuration,
-              TimeWorkDuration: subtractTime(
-                agentStatistic.FulDuration,
-                agentStatistic.PauseDuration,
-              ),
-            })
-            .where({
-              agent_id: findAgentinControlGraph.agent_id,
-            })
-            .execute();
-          arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
-            e.month_id?.agent_id?.name,
-            'kech qoldi',
-           new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-            agentStatistic.LastLoginTime,
-            agentStatistic.PauseDuration,
-            agentStatistic.FulDuration,
-            e.work_type,
-            e.work_time,
-            findLocation ? findLocation.ip_Adress : 'Not available',
-            findLocation ? findLocation.location : 'Not available',
-            findLocation ? findLocation.atc : 'Not available',
-          ]);
-        } else {
-          await AgentControlGraphEntity.createQueryBuilder()
-            .update(AgentControlGraphEntity)
-            .set({
-              LastLoginTime: findAgentinControlGraph.LastLoginTime,
-              FullDurationOfWork: agentStatistic.FulDuration,
-              PauseDuration: agentStatistic.PauseDuration,
-              TimeWorkDuration: subtractTime(
-                agentStatistic.FulDuration,
-                agentStatistic.PauseDuration,
-              ),
-            })
-            .where({
-              agent_id: findAgentinControlGraph.agent_id,
-            })
-            .execute();
-          arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
-            e.month_id?.agent_id?.name,
-            'vaqtida keldi',
-            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-            agentStatistic.LastLoginTime,
-            agentStatistic.PauseDuration,
-            agentStatistic.FulDuration,
-            e.work_type,
-            e.work_time,
-            findLocation ? findLocation.ip_Adress : 'Not available',
-            findLocation ? findLocation.location : 'Not available',
-            findLocation ? findLocation.atc : 'Not available',
-          ]);
-        }
-      } else if (
-        agentStatistic.LastLoginTime == 'not login' &&
-        findAgentinControlGraph.LastLoginTime != 'not login'
-      ) {
-
-        await AgentControlGraphEntity.createQueryBuilder()
-          .update(AgentControlGraphEntity)
-          .set({
-            LastLoginTime: findAgentinControlGraph.LastLoginTime,
-            FullDurationOfWork: agentStatistic.FulDuration,
-            PauseDuration: agentStatistic.PauseDuration,
-            TimeWorkDuration: subtractTime(
-              agentStatistic.FulDuration,
-              agentStatistic.PauseDuration,
-            ),
-          })
-          .where({ agent_id: findAgentinControlGraph.agent_id })
-          .execute();
-
-        arrDataForSheet.push([
-          e.month_id?.agent_id?.id_login,
-          e.month_id?.agent_id?.name,
-          'kelmadi',
-          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-          agentStatistic.LastLoginTime,
-          agentStatistic.PauseDuration,
-          agentStatistic.FulDuration,
-          e.work_type,
-          e.work_time,
-          findLocation ? findLocation.ip_Adress : 'Not available',
-          findLocation ? findLocation.location : 'Not available',
-          findLocation ? findLocation.atc : 'Not available',
-        ]);
-      } else if (agentStatistic.LastLoginTime == 'not login') {
-
-        await AgentControlGraphEntity.createQueryBuilder()
-          .update(AgentControlGraphEntity)
-          .set({
-            LastLoginTime: agentStatistic.LastLoginTime,
-            FullDurationOfWork: agentStatistic.FulDuration,
-            PauseDuration: agentStatistic.PauseDuration,
-          })
-          .where({ agent_id: findAgentinControlGraph.agent_id })
-          .execute();
-
-        arrDataForSheet.push([
-          e.month_id?.agent_id?.id_login,
-          e.month_id?.agent_id?.name,
-          'kelmadi',
-          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-          agentStatistic.LastLoginTime,
-          agentStatistic.PauseDuration,
-          agentStatistic.FulDuration,
-          e.work_type,
-          e.work_time,
-          findLocation ? findLocation.ip_Adress : 'Not available',
-          findLocation ? findLocation.location : 'Not available',
-          findLocation ? findLocation.atc : 'Not available',
-        ]);
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate() + 1);
+        untilDate.setHours(2, 0, 0, 0);
       } else {
-        const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
-          agentStatistic.LastLoginTime,
-        );
+        fromDate = new Date();
+        fromDate.setDate(fromDate.getDate() - 1);
+        fromDate.setHours(startControlTime, 0, 0, 0); //16
 
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180 ) {
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate());
+        untilDate.setHours(1, 0, 0, 0);
+      }
+    }
 
-          await AgentControlGraphEntity.createQueryBuilder()
-            .update(AgentControlGraphEntity)
-            .set({
-              LastLoginTime: agentStatistic.LastLoginTime,
-              FullDurationOfWork: agentStatistic.FulDuration,
-              PauseDuration: agentStatistic.PauseDuration,
-              TimeWorkDuration: subtractTime(
-                agentStatistic.FulDuration,
-                agentStatistic.PauseDuration,
-              ),
-            })
-            .where({ agent_id: findAgentinControlGraph.agent_id })
-            .execute();
+    if (worktime == '20-08') {
+      if (startControlTime <= theCurrentHour && theCurrentHour <= 24) {
+        fromDate = new Date();
+        fromDate.setHours(startControlTime - 1, 0, 0, 0); //16
 
-          arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
-            e.month_id?.agent_id?.name,
-            'kech qoldi',
-            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-            agentStatistic.LastLoginTime,
-            agentStatistic.PauseDuration,
-            agentStatistic.FulDuration,
-            e.work_type,
-            e.work_time,
-            findLocation ? findLocation.ip_Adress : 'Not available',
-            findLocation ? findLocation.location : 'Not available',
-            findLocation ? findLocation.atc : 'Not available',
-          ]);
-        } else {
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate() + 1);
+        untilDate.setHours(0, 0, 0, 0);
+      } else {
+        fromDate = new Date();
+        fromDate.setDate(fromDate.getDate() - 1);
+        fromDate.setHours(startControlTime - 1, 0, 0, 0); //16
 
-          await AgentControlGraphEntity.createQueryBuilder()
-            .update(AgentControlGraphEntity)
-            .set({
-              LastLoginTime: agentStatistic.LastLoginTime,
-              FullDurationOfWork: agentStatistic.FulDuration,
-              PauseDuration: agentStatistic.PauseDuration,
-              TimeWorkDuration: subtractTime(
-                agentStatistic.FulDuration,
-                agentStatistic.PauseDuration,
-              ),
+        untilDate = new Date();
+        untilDate.setDate(untilDate.getDate());
+        untilDate.setHours(23, 59, 59, 999);
+      }
+    }
+    const startWorkTimeParseSeconds = parseTimeStringToSeconds(
+      `${workTimeArr[0]}:00:00`,
+    );
+    const endWorkTimeParseSeconds = parseTimeStringToSeconds(
+      `${workTimeArr[1]}:00:00`,
+    );
 
-              ComeToWorkOnTime: true,
-            })
-            .where({ agent_id: findAgentinControlGraph.agent_id })
-            .execute();
+    const listOfWorkersToday: any = await GraphDaysEntity.find({
+      where: {
+        the_date: `${+theDay < 10 ? `0${theDay}` : theDay}.${
+          theMonth.toString().length > 1 ? theMonth : `0${theMonth}`
+        }.${theYear}`,
+        work_type: typeWorkGraphSmen.includes(worktime) ? 'smen' : 'day',
+        work_time: worktime,
+        // work_time: '17-02',
+        month_id: {
+          month_number: theMonth,
+          year: theYear,
+        },
+      },
+      relations: {
+        month_id: {
+          agent_id: true,
+        },
+      },
+    });
+    console.log(listOfWorkersToday, listOfWorkersToday.length, 'okk');
 
-          arrDataForSheet.push([
-            e.month_id?.agent_id?.id_login,
-            e.month_id?.agent_id?.name,
-            'vaqtida keldi',
-            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-            agentStatistic.LastLoginTime,
-            agentStatistic.PauseDuration,
-            agentStatistic.FulDuration,
-            e.work_type,
-            e.work_time,
-            findLocation ? findLocation.ip_Adress : 'Not available',
-            findLocation ? findLocation.location : 'Not available',
-            findLocation ? findLocation.atc : 'Not available',
-          ]);
+    let arrDataForSheet = [] as any;
+
+    for (const e of listOfWorkersToday) {
+      const newDateEveryLoop = new Date();
+      let dataIp: any = await cache.get('activeOperators');
+      // console.log(dataIp?.length);
+      let findOperator: any = {};
+      if (dataIp) {
+        for (let i of dataIp) {
+          if (i?.login == e.month_id?.agent_id?.id_login) {
+            findOperator = i;
+          }
         }
       }
-    } else {
 
-      if ((agentStatistic.LastLoginTime = 'not login')) {
-        await AgentControlGraphEntity.createQueryBuilder()
-          .insert()
-          .into(AgentControlGraphEntity)
-          .values({
-            id: e.month_id?.agent_id.id,
+      let findLocation: any = {
+        sheet_id: null,
+        ip_Adress: null,
+        location: null,
+        atc: null,
+        create_data: null,
+      };
+
+      if (findOperator?.ip_adress) {
+        findLocation = await ComputersEntity.findOne({
+          where: {
+            ip_Adress: findOperator?.ip_adress,
+          },
+        });
+      }
+
+      //   console.log(e.month_id?.agent_id.id , 'idadn');
+      const agentStatisticPromise = fetchGetagentStatistic(
+        e.month_id?.agent_id?.id,
+      );
+      let agentStatisticData = await Promise.all([agentStatisticPromise]);
+
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+
+      const agentStatistic = agentStatisticData[0];
+
+      const findAgentinControlGraph: AgentControlGraphEntity =
+        await AgentControlGraphEntity.findOne({
+          where: {
             id_login: e.month_id?.agent_id?.id_login,
-            id_login_type_number: +e.month_id?.agent_id?.id_login,
-            name: e.month_id?.agent_id?.name,
-            timeWork: e.work_time,
-            typeWork: e.work_type,
-            LastLoginTime: agentStatistic.LastLoginTime,
-            FullDurationOfWork: agentStatistic.FulDuration,
-            PauseDuration: agentStatistic.PauseDuration,
-            TimeWorkDuration: subtractTime(
-              agentStatistic.FulDuration,
-              agentStatistic.PauseDuration,
-            ),
-          })
-          .execute()
-          .catch((e) => {
-            throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-          });
+            create_data: Between(fromDate, untilDate),
+          },
+        }).catch((e) => {
+          // console.log(e);
+          throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+        });
 
-        arrDataForSheet.push([
-          e.month_id?.agent_id?.id_login,
-          e.month_id?.agent_id?.name,
-          'kelmadi',
-          new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
-          agentStatistic.LastLoginTime,
-          agentStatistic.PauseDuration,
-          agentStatistic.FulDuration,
-          e.work_type,
-          e.work_time,
-          findLocation ? findLocation.ip_Adress : 'Not available',
-          findLocation ? findLocation.location : 'Not available',
-          findLocation ? findLocation.atc : 'Not available',
-        ]);
-      } else {
-        const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
-          agentStatistic.LastLoginTime,
-        );
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds +180) {
+      if (findAgentinControlGraph) {
+        if (
+          agentStatistic.LastLoginTime != 'not login' &&
+          findAgentinControlGraph.LastLoginTime != 'not login'
+        ) {
+          const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
+            agentStatistic.LastLoginTime,
+          );
+
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .update(AgentControlGraphEntity)
+              .set({
+                LastLoginTime: findAgentinControlGraph.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+              })
+              .where({
+                agent_id: findAgentinControlGraph.agent_id,
+              })
+              .execute();
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'kech qoldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          } else {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .update(AgentControlGraphEntity)
+              .set({
+                LastLoginTime: findAgentinControlGraph.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+              })
+              .where({
+                agent_id: findAgentinControlGraph.agent_id,
+              })
+              .execute();
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'vaqtida keldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          }
+        } else if (
+          agentStatistic.LastLoginTime == 'not login' &&
+          findAgentinControlGraph.LastLoginTime != 'not login'
+        ) {
           await AgentControlGraphEntity.createQueryBuilder()
-            .insert()
-            .into(AgentControlGraphEntity)
-            .values({
-              id: e.month_id?.agent_id.id,
-              id_login: e.month_id?.agent_id.id_login,
-              id_login_type_number: +e.month_id?.agent_id.id_login,
-              name: e.month_id?.agent_id.name,
-              timeWork: e.work_time,
-              typeWork: e.work_type,
-              LastLoginTime: agentStatistic.LastLoginTime,
+            .update(AgentControlGraphEntity)
+            .set({
+              LastLoginTime: findAgentinControlGraph.LastLoginTime,
               FullDurationOfWork: agentStatistic.FulDuration,
               PauseDuration: agentStatistic.PauseDuration,
               TimeWorkDuration: subtractTime(
@@ -454,15 +267,39 @@ export const ControlAgentGraphNB = async (
                 agentStatistic.PauseDuration,
               ),
             })
-            .execute()
-            .catch((e) => {
-              throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
-            });
+            .where({ agent_id: findAgentinControlGraph.agent_id })
+            .execute();
+
           arrDataForSheet.push([
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
-            'kech qoldi',
-            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
+            'kelmadi',
+            new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+            agentStatistic.LastLoginTime,
+            agentStatistic.PauseDuration,
+            agentStatistic.FulDuration,
+            e.work_type,
+            e.work_time,
+            findLocation ? findLocation.ip_Adress : 'Not available',
+            findLocation ? findLocation.location : 'Not available',
+            findLocation ? findLocation.atc : 'Not available',
+          ]);
+        } else if (agentStatistic.LastLoginTime == 'not login') {
+          await AgentControlGraphEntity.createQueryBuilder()
+            .update(AgentControlGraphEntity)
+            .set({
+              LastLoginTime: agentStatistic.LastLoginTime,
+              FullDurationOfWork: agentStatistic.FulDuration,
+              PauseDuration: agentStatistic.PauseDuration,
+            })
+            .where({ agent_id: findAgentinControlGraph.agent_id })
+            .execute();
+
+          arrDataForSheet.push([
+            e.month_id?.agent_id?.id_login,
+            e.month_id?.agent_id?.name,
+            'kelmadi',
+            new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -473,14 +310,82 @@ export const ControlAgentGraphNB = async (
             findLocation ? findLocation.atc : 'Not available',
           ]);
         } else {
+          const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
+            agentStatistic.LastLoginTime,
+          );
+
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .update(AgentControlGraphEntity)
+              .set({
+                LastLoginTime: agentStatistic.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+              })
+              .where({ agent_id: findAgentinControlGraph.agent_id })
+              .execute();
+
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'kech qoldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          } else {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .update(AgentControlGraphEntity)
+              .set({
+                LastLoginTime: agentStatistic.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+
+                ComeToWorkOnTime: true,
+              })
+              .where({ agent_id: findAgentinControlGraph.agent_id })
+              .execute();
+
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'vaqtida keldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          }
+        }
+      } else {
+        if ((agentStatistic.LastLoginTime = 'not login')) {
           await AgentControlGraphEntity.createQueryBuilder()
             .insert()
             .into(AgentControlGraphEntity)
             .values({
               id: e.month_id?.agent_id.id,
-              id_login: e.month_id?.agent_id.id_login,
-              id_login_type_number: +e.month_id?.agent_id.id_login,
-              name: e.month_id?.agent_id.name,
+              id_login: e.month_id?.agent_id?.id_login,
+              id_login_type_number: +e.month_id?.agent_id?.id_login,
+              name: e.month_id?.agent_id?.name,
               timeWork: e.work_time,
               typeWork: e.work_type,
               LastLoginTime: agentStatistic.LastLoginTime,
@@ -490,8 +395,6 @@ export const ControlAgentGraphNB = async (
                 agentStatistic.FulDuration,
                 agentStatistic.PauseDuration,
               ),
-
-              ComeToWorkOnTime: true,
             })
             .execute()
             .catch((e) => {
@@ -501,8 +404,8 @@ export const ControlAgentGraphNB = async (
           arrDataForSheet.push([
             e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
-            'vaqtida keldi',
-            new Date(atDate.getTime() + 5 * 60 * 60 * 1000),
+            'kelmadi',
+            new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
             agentStatistic.LastLoginTime,
             agentStatistic.PauseDuration,
             agentStatistic.FulDuration,
@@ -512,29 +415,107 @@ export const ControlAgentGraphNB = async (
             findLocation ? findLocation.location : 'Not available',
             findLocation ? findLocation.atc : 'Not available',
           ]);
+        } else {
+          const lastLoginTimeParseSeconds = parseTimeStringToSeconds(
+            agentStatistic.LastLoginTime,
+          );
+          if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 180) {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .insert()
+              .into(AgentControlGraphEntity)
+              .values({
+                id: e.month_id?.agent_id.id,
+                id_login: e.month_id?.agent_id.id_login,
+                id_login_type_number: +e.month_id?.agent_id.id_login,
+                name: e.month_id?.agent_id.name,
+                timeWork: e.work_time,
+                typeWork: e.work_type,
+                LastLoginTime: agentStatistic.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+              })
+              .execute()
+              .catch((e) => {
+                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              });
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'kech qoldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          } else {
+            await AgentControlGraphEntity.createQueryBuilder()
+              .insert()
+              .into(AgentControlGraphEntity)
+              .values({
+                id: e.month_id?.agent_id.id,
+                id_login: e.month_id?.agent_id.id_login,
+                id_login_type_number: +e.month_id?.agent_id.id_login,
+                name: e.month_id?.agent_id.name,
+                timeWork: e.work_time,
+                typeWork: e.work_type,
+                LastLoginTime: agentStatistic.LastLoginTime,
+                FullDurationOfWork: agentStatistic.FulDuration,
+                PauseDuration: agentStatistic.PauseDuration,
+                TimeWorkDuration: subtractTime(
+                  agentStatistic.FulDuration,
+                  agentStatistic.PauseDuration,
+                ),
+
+                ComeToWorkOnTime: true,
+              })
+              .execute()
+              .catch((e) => {
+                throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+              });
+
+            arrDataForSheet.push([
+              e.month_id?.agent_id?.id_login,
+              e.month_id?.agent_id?.name,
+              'vaqtida keldi',
+              new Date(newDateEveryLoop.getTime() + 5 * 60 * 60 * 1000),
+              agentStatistic.LastLoginTime,
+              agentStatistic.PauseDuration,
+              agentStatistic.FulDuration,
+              e.work_type,
+              e.work_time,
+              findLocation ? findLocation.ip_Adress : 'Not available',
+              findLocation ? findLocation.location : 'Not available',
+              findLocation ? findLocation.atc : 'Not available',
+            ]);
+          }
         }
       }
     }
 
-  await insertRowsAtTop('904805158', arrDataForSheet?.length);
-  await writeToSheet('255CHECK-IN/OUT', 'A1', arrDataForSheet);
-  }
-// console.log(arrDataForSheet , a);
-
-  // const sheetReadAttendanceRecordsAdmin = await readSheets('Klon', 'A:A');
-
-  // arrDataForSheet;
-  // const writeRow = sheetReadAttendanceRecordsAdmin
-  //   ? `A${sheetReadAttendanceRecordsAdmin?.length + 1}`
-  //   : 'A1';
-
-// console.log(writeRow);
-
+    await insertRowsAtTop(
+      process.env.SHEETID,
+      '904805158',
+      arrDataForSheet?.length,
+    );
+    await writeToSheet(
+      process.env.SHEETID,
+      '255CHECK-IN/OUT',
+      'A1',
+      arrDataForSheet,
+    );
 
     return [true];
-      } catch (error) {
+  } catch (error) {
     console.log(error.message);
-    
   }
 };
 

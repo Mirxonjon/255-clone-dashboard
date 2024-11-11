@@ -15,7 +15,11 @@ import {
   ControlAgentGraphNB,
 } from 'src/utils/agentControlfunctions';
 import { returnMothData } from 'src/utils/converters';
-import { readSheets } from 'src/utils/google_cloud';
+import {
+  insertRowsAtTop,
+  readSheets,
+  writeToSheet,
+} from 'src/utils/google_cloud';
 import { Like } from 'typeorm';
 
 @Injectable()
@@ -703,7 +707,6 @@ export class AgentsService {
     try {
       const cutRanges = 'A2:AK500';
 
-      // const sheetId: string = '1BF7Z9CTKdL-RvBwzZTcB4gvOqoviX6fUwHIBmSlG_ow';
       const rangeName: string = '255';
       const sheets = await readSheets(rangeName, cutRanges);
       console.log(sheets);
@@ -1233,7 +1236,6 @@ export class AgentsService {
     }
   }
 
-  
   @Cron(CronExpression.EVERY_MINUTE)
   async controlOperator() {
     const atDate = new Date();
@@ -1241,7 +1243,7 @@ export class AgentsService {
     const theCurrentHour = atDate.getHours();
     const theCurrentMinut = atDate.getMinutes();
     const RequestTimeMinutes = [5, 10, 20, 50];
-    const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
+    // const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
     // console.log(theCurrentHour, theCurrentMinut, atDate, uzbekistanTime);
     // const controlday = await ControlAgentGraphNB(
     //   '07-16',
@@ -1322,6 +1324,8 @@ export class AgentsService {
         const allDataSmena = Promise.all(controlSmen);
       }
     }
+
+    this.actionOperator();
   }
 
   @Cron('0 0 1 * *')
@@ -1391,5 +1395,51 @@ export class AgentsService {
     } catch (error) {
       console.log(error.message);
     }
+  }
+
+  // @Cron(CronExpression.EVERY_10_SECONDS)
+
+  async actionOperator() {
+    let actionOperators: any = await this.#_cache.get('activeOperators');
+    let arrSentExcelFormat = [];
+    // console.log(actionOperators);
+
+    //     {
+    //   id: '7462',
+    //   ip_adress: '192.168.61.10',
+    //   login: '180',
+    //   firstName: 'Feruza',
+    //   lastName: 'Zikirova',
+    //   secondName: 'Raxmonberdiyevna',
+    //   lockCause: '-1',
+    //   agentState: '3',
+    //   agentStateDuration: '322'
+    // }
+    if (actionOperators) {
+      for (let e of actionOperators) {
+        arrSentExcelFormat.push([
+          e.id,
+          e.login,
+          `${e.lastName} ${e.firstName} ${e.secondName}`,
+          e.lockCause,
+          e.agentState,
+          e.agentStateDuration,
+          e.ip_adress,
+        ]);
+      }
+      await insertRowsAtTop(
+        process.env.SHEETIDSECOND,
+        '500245287',
+        arrSentExcelFormat?.length,
+      );
+      await writeToSheet(
+        process.env.SHEETIDSECOND,
+        'Перерыв/Обед',
+        'A1',
+        arrSentExcelFormat,
+      );
+    }
+
+    return true;
   }
 }

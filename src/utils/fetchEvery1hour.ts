@@ -9,6 +9,7 @@ import { agentslockEntity } from 'src/entities/agentslock.entity';
 import { Telegraf, Context } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { Cache } from 'cache-manager';
+import { insertRowsAtTop, writeToSheet } from './google_cloud';
 
 export const fetchStatisticByGroup = async () => {
   const findGroups = await GroupsEntity.find();
@@ -130,16 +131,30 @@ export const operatorsWhere = async (
     ][0]['ct:agents'][0]['ct:TmCtAgentInGroup2'];
   // console.log(agents);
   let arrActiveOperators = [];
+  let arrActionOperators = [];
+
   for (let i = 0; i < agents.length; i++) {
     if (agents[i]['ct:ip'][0]) {
       arrActiveOperators.push({
         id: agents[i]['ct:id'][0],
         ip_adress: agents[i]['ct:ip'][0],
-          firstName: agents[i]['ct:firstName'][0],
-          login: agents[i]['ct:login'][0],
-          lastName: agents[i]['ct:lastName'][0],
-          secondName: agents[i]['ct:secondName'][0],
+        login: agents[i]['ct:login'][0],
+        firstName: agents[i]['ct:firstName'][0],
+        lastName: agents[i]['ct:lastName'][0],
+        secondName: agents[i]['ct:secondName'][0],
+        lockCause: agents[i]['ct:lockCause'][0],
+        agentState: agents[i]['ct:agentState'][0],
+        agentStateDuration: agents[i]['ct:agentStateDuration'][0],
       });
+      // arrActionOperators.push([
+      //   agents[i]['ct:id'][0],
+      //   agents[i]['ct:login'][0],
+      //   `${agents[i]['ct:lastName'][0]} ${agents[i]['ct:firstName'][0]} ${agents[i]['ct:secondName'][0]}`,
+      //   agents[i]['ct:lockCause'][0],
+      //   agents[i]['ct:agentState'][0],
+      //   agents[i]['ct:ip'][0],
+      //   agents[i]['ct:agentStateDuration'][0],
+      // ]);
       const arr = ['2', '4', '3', '6'];
       const findAgent = await agentsDataStateEntity.findOneBy({
         id: agents[i]['ct:id'][0],
@@ -402,10 +417,9 @@ export const operatorsWhere = async (
     }
   }
   // console.log(arrActiveOperators);
-  
- await cache.set('activeOperators', arrActiveOperators, 3600000);
+
+  await cache.set('activeOperators', arrActiveOperators, 3600000);
   //  const data1 = await cache.get('activeOperators');
   //  console.log(data1, 'Cntroldan');
   return arrBlockAgents;
 };
-

@@ -78,12 +78,13 @@ export const readSheet = async (rangeCut: string) => {
 
 
 export const writeToSheet = async (
+  sheetID :string,
   list: string,
   rangeCut: string,
   values: any[][],
 ) => {
   const sheets = google.sheets({ version: 'v4', auth }); // Creates a Sheets API client instance.
-  const spreadsheetId = process.env.SHEETID;
+  const spreadsheetId = sheetID;
   const range = `${list}!${rangeCut}`; // The range in the sheet where data will be written.
   const valueInputOption = 'USER_ENTERED'; // How input data should be interpreted.
 
@@ -102,9 +103,9 @@ export const writeToSheet = async (
   }
 };
 
-export const insertRowsAtTop = async (list, numRows = 10 ) => {
+export const insertRowsAtTop = async (sheetID,list, numRows = 10 ) => {
   const sheets = google.sheets({ version: 'v4', auth }); // Create Sheets API client instance.
-  const spreadsheetId = process.env.SHEETID;
+  const spreadsheetId = sheetID // process.env.SHEETID;
 
   try {
     const res = await sheets.spreadsheets.batchUpdate({
