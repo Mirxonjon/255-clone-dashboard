@@ -98,7 +98,7 @@ export const fetchGetagentStatistic = async (id: number) => {
       </soapenv:Body>
     </soapenv:Envelope>`;
 
-    const { data } = await axios.post('http://192.168.42.92:8081/ct?wsdl', xml);
+    const { data } = await axios.post('http://192.168.42.93:8081/ct?wsdl', xml);
 
     const convertedData = await parseStringPromise(data);
 
