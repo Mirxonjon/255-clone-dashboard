@@ -1253,7 +1253,7 @@ export class AgentsService {
 
     const theCurrentHour = atDate.getHours();
     const theCurrentMinut = atDate.getMinutes();
-    const RequestTimeMinutes = [5, 10, 20, 50];
+    const RequestTimeMinutes = [1, 4, 10, 30];
     // const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
     // console.log(theCurrentHour, theCurrentMinut, atDate, uzbekistanTime);
     // const controlday = await ControlAgentGraphSendSheet(

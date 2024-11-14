@@ -166,7 +166,7 @@ export const ControlAgentGraphSendSheet = async (
       );
       let agentStatisticData = await Promise.all([agentStatisticPromise]);
 
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
 
       const agentStatistic = agentStatisticData[0];
       console.log(agentStatistic, 'AgentStatistic');
