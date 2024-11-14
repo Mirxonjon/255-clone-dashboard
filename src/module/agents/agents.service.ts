@@ -13,7 +13,7 @@ import { GroupsEntity } from 'src/entities/group.entity';
 import { ServicesEntity } from 'src/entities/service.entity';
 import {
   ControlAgentGraph,
-  ControlAgentGraphNB,
+  ControlAgentGraphSendSheet,
 } from 'src/utils/agentControlfunctions';
 import { returnMothData } from 'src/utils/converters';
 import {
@@ -1256,15 +1256,15 @@ export class AgentsService {
     const RequestTimeMinutes = [5, 10, 20, 50];
     // const uzbekistanTime = new Date(atDate.getTime() + 5 * 60 * 60 * 1000);
     // console.log(theCurrentHour, theCurrentMinut, atDate, uzbekistanTime);
-    // const controlday = await ControlAgentGraphNB(
-    //   '07-16',
+    // const controlday = await ControlAgentGraphSendSheet(
+    //   '15-24',
     //   theCurrentHour,
     //   this.#_cache,
     // );
 
     if (RequestTimeMinutes.includes(theCurrentMinut)) {
       if (theCurrentHour == 7) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '07-16',
           theCurrentHour,
           this.#_cache,
@@ -1272,13 +1272,13 @@ export class AgentsService {
         const allDataDay = Promise.all(controlday);
       }
       if (theCurrentHour == 8) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '08-17',
           theCurrentHour,
           this.#_cache,
         );
         const allDataday = Promise.all(controlday);
-        const controlSmen = await ControlAgentGraphNB(
+        const controlSmen = await ControlAgentGraphSendSheet(
           '08-20',
           theCurrentHour,
           this.#_cache,
@@ -1286,7 +1286,7 @@ export class AgentsService {
         const allDataSmena = Promise.all(controlSmen);
       }
       if (theCurrentHour == 9) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '09-18',
           theCurrentHour,
           this.#_cache,
@@ -1294,7 +1294,7 @@ export class AgentsService {
         const allDataDay = Promise.all(controlday);
       }
       if (theCurrentHour == 11) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '11-20',
           theCurrentHour,
           this.#_cache,
@@ -1302,7 +1302,7 @@ export class AgentsService {
         const allDataDay = Promise.all(controlday);
       }
       if (theCurrentHour == 13) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '13-22',
           theCurrentHour,
           this.#_cache,
@@ -1310,7 +1310,7 @@ export class AgentsService {
         const allDataDay = Promise.all(controlday);
       }
       if (theCurrentHour == 15) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '15-24',
           theCurrentHour,
           this.#_cache,
@@ -1318,7 +1318,7 @@ export class AgentsService {
         const allDataDay = Promise.all(controlday);
       }
       if (theCurrentHour == 17) {
-        const controlday = await ControlAgentGraphNB(
+        const controlday = await ControlAgentGraphSendSheet(
           '17-02',
           theCurrentHour,
           this.#_cache,
@@ -1327,7 +1327,7 @@ export class AgentsService {
       }
 
       if (theCurrentHour == 20) {
-        const controlSmen = await ControlAgentGraphNB(
+        const controlSmen = await ControlAgentGraphSendSheet(
           '20-08',
           theCurrentHour,
           this.#_cache,
