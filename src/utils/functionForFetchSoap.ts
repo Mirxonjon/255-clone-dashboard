@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { log } from 'console';
+import { DataEntity } from 'src/entities/data.entity';
 import { parseStringPromise } from 'xml2js';
 
 // export const fetchGetagentStatistic = async (id: number) => {
@@ -106,7 +107,47 @@ export const fetchGetagentStatistic = async (id: number) => {
     const statisticResponse = body?.['ct:PrCtGetStatisticTlvResp']?.[0];
     const listStatistic = statisticResponse?.['ct:listStatistic']?.[0];
     const statisticTlv = listStatistic?.['ct:TmCtStatisticTlv']?.[0];
-    console.log(statisticResponse , listStatistic , statisticTlv );
+        const listValues1 =
+          statisticTlv['ct:listValue'][0]['ct:TmStatDataValueTlv'] || [];
+        const LastLoginTime1 =
+          listValues1[11]?.['ct:strValue']?.[0] ;
+        const FulDuration1 = listValues1[12]?.['ct:strValue']?.[0] ;
+        const PauseDuration1 =
+          listValues1[17]?.['ct:strValue']?.[0];
+      const listParam = statisticResponse?.['ct:listParam'] || [];
+  const statistics = listParam.map((paramName, index) => {
+    const valueData = listValues1[index] || {};
+    return {
+      name: paramName,
+      strValue: valueData['ct:strValue']?.[0] || null,
+      nParameter: valueData['ct:nParameter']?.[0] || null,
+    };
+  });
+    
+    console.log(statistics);
+    
+   // await DataEntity.create({ dataSaup: `${body}` });
+       await DataEntity.createQueryBuilder()
+         .insert()
+         .into(DataEntity)
+         .values({
+           dataSaup: body,
+           id_agent : id.toString() ,
+           lastLoginTime: LastLoginTime1,
+           FulDuration: FulDuration1,
+           PauseDuration: PauseDuration1
+         })
+         .execute()
+         .catch((e) => {
+           console.log(e.message);
+           
+          //  throw new HttpException('Bad Request', HttpStatus.BAD_REQUEST);
+         });
+      
+ 
+    // console.log(body, 'BODY');
+    
+    console.log(LastLoginTime1, FulDuration1, PauseDuration1, 'STATISTIK');
     
     if (!statisticTlv || !statisticTlv['ct:listValue']) {
       return {

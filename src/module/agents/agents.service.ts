@@ -6,6 +6,7 @@ import { AgentDateEntity } from 'src/entities/agentdate.entity';
 import { agentsDataStateEntity } from 'src/entities/agentsDataState.entity';
 import { agentslockEntity } from 'src/entities/agentslock.entity';
 import { ComputersEntity } from 'src/entities/computer.entity';
+import { DataEntity } from 'src/entities/data.entity';
 import { GraphDaysEntity } from 'src/entities/graphDays';
 import { GraphMonthEntity } from 'src/entities/graphMoth';
 import { GroupsEntity } from 'src/entities/group.entity';
@@ -39,6 +40,16 @@ export class AgentsService {
     });
 
     return findBlockAgents;
+  }
+
+  async findAllData() {
+        const findBlockAgents = await DataEntity.find({
+          order: {
+            create_data: 'DESC',
+          },
+        });
+
+        return findBlockAgents;
   }
 
   async findAll(pageNumber = 1, pageSize = 10) {

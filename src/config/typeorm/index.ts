@@ -14,6 +14,7 @@ import { GraphMonthEntity } from 'src/entities/graphMoth';
 import { GraphDaysEntity } from 'src/entities/graphDays';
 import { ComputersEntity } from 'src/entities/computer.entity';
 import { AgentControlGraphEntity } from 'src/entities/agentsControlGrafigh.entity';
+import { DataEntity } from 'src/entities/data.entity';
 
 dotenv.config();
 
@@ -39,6 +40,7 @@ export const connectDb: TypeOrmModuleOptions = {
     GraphDaysEntity,
     ComputersEntity,
     AgentControlGraphEntity,
+    DataEntity,
   ],
   autoLoadEntities: true,
   synchronize: true,

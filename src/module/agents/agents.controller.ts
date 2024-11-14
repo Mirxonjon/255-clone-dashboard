@@ -16,6 +16,13 @@ export class AgentsController {
   async findAllAgents() {
     return await this.#_service.findAllAgents();
   }
+  @Get('getall/data')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async findAllData() {
+    return await this.#_service.findAllData();
+  }
   @Get('allBlock')
   @ApiBadRequestResponse()
   @ApiNotFoundResponse()
