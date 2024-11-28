@@ -8,7 +8,7 @@ import {
 import { AgentControlGraphEntity } from 'src/entities/agentsControlGrafigh.entity';
 import { Between } from 'typeorm';
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { fetchGetagentStatistic } from './functionForFetchSoap';
+import { fetchGetagentStatistic, fetchGetagentStatistic1 } from './functionForFetchSoap';
 import { Cache } from 'cache-manager';
 import { ComputersEntity } from 'src/entities/computer.entity';
 import { insertRowsAtTop, writeToSheet } from './google_cloud';
@@ -161,7 +161,7 @@ export const ControlAgentGraphSendSheet = async (
         });
       }
 
-      const agentStatisticPromise = fetchGetagentStatistic(
+      const agentStatisticPromise = fetchGetagentStatistic1(
         e.month_id?.agent_id?.id,
       );
       let agentStatisticData = await Promise.all([agentStatisticPromise]);
@@ -231,12 +231,12 @@ export const ControlAgentGraphSendSheet = async (
 
     await insertRowsAtTop(
       process.env.SHEETID,
-      '904805158',
+      '1700362275',
       arrDataForSheet?.length,
     );
     await writeToSheet(
       process.env.SHEETID,
-      '255CHECK-IN/OUT',
+      'Klon',
       'A1',
       arrDataForSheet,
     );
