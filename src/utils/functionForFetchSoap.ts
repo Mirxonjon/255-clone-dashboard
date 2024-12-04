@@ -171,14 +171,14 @@ export const fetchGetagentStatistic = async (id: number) => {
 
 export const fetchGetagentStatistic1 = async (agentId: number) => {
   try {
-    const today = new Date();
-    const startDate = today.toISOString().split('T')[0]; 
+    // const today = new Date();
+    // const startDate = today.toISOString().split('T')[0]; 
 
     // API so'rovi
     const response = await axios.get(
-      `http://192.168.42.101:9090/agent?agentId=${agentId}&startDate=${startDate}`,
+      `http://192.168.42.101:9090/agent?agentId=${agentId}&lastSeconds=43200`,
     );
-    console.log(response.data, startDate);
+    // console.log(response.data);
 
     const data = response.data;
 
