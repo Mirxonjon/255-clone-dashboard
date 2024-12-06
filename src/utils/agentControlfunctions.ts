@@ -195,7 +195,7 @@ export const ControlAgentGraphSendSheet = async (
           console.log(lastLoginTimeParseSeconds, 'lastLoginTimeParseSeconds');
 
         
-        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 300) {
+        if (lastLoginTimeParseSeconds >= startWorkTimeParseSeconds + 360) {
           arrDataForSheet.push([
             // e.month_id?.agent_id?.id_login,
             e.month_id?.agent_id?.name,
