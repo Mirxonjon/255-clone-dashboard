@@ -152,4 +152,12 @@ export class AgentsController {
   async deleteOperator() {
     return await this.#_service.deleteOperator();
   }
+
+  @Get('delete-operators')
+  @ApiBadRequestResponse()
+  @ApiNotFoundResponse()
+  @ApiOkResponse()
+  async deleteOperators() {
+    return await this.#_service.deleteOperators();
+  }
 }

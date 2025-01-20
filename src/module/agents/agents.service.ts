@@ -43,13 +43,13 @@ export class AgentsService {
   }
 
   async findAllData() {
-        const findBlockAgents = await DataEntity.find({
-          order: {
-            create_data: 'DESC',
-          },
-        });
+    const findBlockAgents = await DataEntity.find({
+      order: {
+        create_data: 'DESC',
+      },
+    });
 
-        return findBlockAgents;
+    return findBlockAgents;
   }
 
   async findAll(pageNumber = 1, pageSize = 10) {
@@ -716,6 +716,7 @@ export class AgentsService {
 
   async writeNewGraph() {
     try {
+      // await this.deleteOperators();
       const cutRanges = 'A2:AK500';
 
       const rangeName: string = '255';
@@ -1406,6 +1407,16 @@ export class AgentsService {
     } catch (error) {
       console.log(error.message);
     }
+  }
+
+  async deleteOperators() {
+    const findAgents: AgentDateEntity[] = await AgentDateEntity.find();
+    console.log(findAgents);
+    
+    for (let e of findAgents) {
+      await AgentDateEntity.delete({ id: e.id });
+    }
+    return true
   }
 
   // @Cron(CronExpression.EVERY_10_SECONDS)
