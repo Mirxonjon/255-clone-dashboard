@@ -787,6 +787,7 @@ export class AgentsService {
                       'У',
                     ];
                     const typesTime = [
+                      '06-15',
                       '10-19',
                       '07-16',
                       '08-17',
@@ -996,6 +997,7 @@ export class AgentsService {
                       'У',
                     ];
                     const typesTime = [
+                      '06-15',
                       '10-19',
                       '07-16',
                       '08-17',
@@ -1148,6 +1150,7 @@ export class AgentsService {
                     'У',
                   ];
                   const typesTime = [
+                    '06-15',
                     '10-19',
                     '07-16',
                     '08-17',
@@ -1264,6 +1267,14 @@ export class AgentsService {
     // );
 
     if (RequestTimeMinutes.includes(theCurrentMinut)) {
+      if (theCurrentHour == 7) {
+        const controlday = await ControlAgentGraphSendSheet(
+          '06-15',
+          theCurrentHour,
+          this.#_cache,
+        );
+        const allDataDay = Promise.all(controlday);
+      }
       if (theCurrentHour == 7) {
         const controlday = await ControlAgentGraphSendSheet(
           '07-16',
@@ -1412,11 +1423,11 @@ export class AgentsService {
   async deleteOperators() {
     const findAgents: AgentDateEntity[] = await AgentDateEntity.find();
     console.log(findAgents);
-    
+
     for (let e of findAgents) {
       await AgentDateEntity.delete({ id: e.id });
     }
-    return true
+    return true;
   }
 
   // @Cron(CronExpression.EVERY_10_SECONDS)
