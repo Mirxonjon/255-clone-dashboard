@@ -157,7 +157,7 @@ export class UsersService {
  </soapenv:Envelope>`;
 
     setInterval(async () => {
-      const res = await axios.post('http://192.168.42.92:8081/ct?wsdl', xml, {
+      const res = await axios.post('http://192.168.42.93:8081/ct?wsdl', xml, {
         headers: sampleHeaders,
       });
       console.log(res);

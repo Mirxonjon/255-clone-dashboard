@@ -119,7 +119,7 @@ export class EventsGateway implements OnGatewayConnection, OnGatewayDisconnect {
      </soapenv:Envelope>`;
 
       const { data } = await axios.post(
-        'http://192.168.42.92:8081/ct?wsdl',
+        'http://192.168.42.93:8081/ct?wsdl',
         xml,
         { headers: sampleHeaders },
       );
